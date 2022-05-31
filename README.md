@@ -9,9 +9,11 @@ All the following pose analysis is based on these source `OpenPose` keypoints da
 For one pose, the analysis data include the following:
 - [x] The angles between each joint, e.g., `joint_angles.csv`;
 - [x] The normalized pose, e.g., `keypoints/classical/Michelangelo/1304_norm_1.png`;
+- [ ] The length of each normalized limb.
+
+For a group of poses, the analysis data include the following:
 - [x] The dendrogram, e.g., `dendrogram-michelangelo.png`;
 - [x] The elliptical clustering graph, e.g., `pose_std0.5_classical.png`;
-- [ ] The length of each normalized limb.
 
 In summary, the data generated in the following three code snippets are as below:
 1. Angles between joints: `unit = rad`;
