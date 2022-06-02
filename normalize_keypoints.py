@@ -285,6 +285,7 @@ def process_keypoints(infile, output_dict={}, output_index=[]):
     index_fname = '{}_{}'.format(infile.split('/')[3], infile[infile.rfind('/')+1:infile.rfind('_')])
     artist = infile.split('/')[2]
     image_fname = infile.replace('/data/', '/pix/').replace('_keypoints.npy', '_rendered.png')
+    image = cv2.imread(image_fname)
 
     # iterate through all people
     for keypoints in data['keypoints']:
@@ -308,10 +309,17 @@ def process_keypoints(infile, output_dict={}, output_index=[]):
         # To generate the dendrogram!!!
         calc_joint_angle(output_dict, keypoints)
 
-        #############################
-        # Output 2 - Normalize pose #
-        #############################
+        ###########################
+        # Output 2 - Bounding Box #
+        ###########################
+        image_bbox = clip_bbox(image, keypoints, data['dimension'])
 
+        person_fname = image_fname.replace('_rendered', '_' + str(person_index))
+        cv2.imwrite(person_fname, image_bbox)
+
+        #############################
+        # Output 3 - Normalize pose #
+        #############################
         # rotation: transform any poses to neck-midhip-straight poses, i.e., stand up, sit up, etc...
         rotated_keypoints = rotate_to_vertical_pose(keypoints=keypoints)
 
