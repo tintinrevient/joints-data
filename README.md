@@ -35,7 +35,7 @@ python normalize_keypoints.py --input keypoints/classical/Michelangelo/1304_keyp
 
 The example outputs are listed as below for one painting of Michelangelo:
 * The normalized poses, e.g., in the folder `keypoints/classical/Michelangelo/1304_norm_1.png`;
-* The angles between each joint, which is saved in the file `joint_angles.csv`.
+* The angles between each joint, which is saved in the file `output/joint_angles.csv`.
 
 <p float="left">
     <img src="keypoints/classical/Michelangelo/1304_norm_1.png" width="200" />
@@ -56,10 +56,10 @@ python hierarchical_clustering.py --artist "Michelangelo" --pose True
 ```
 
 The example output is listed as below for Michelangelo as input artist:
-* The dendrogram, which is saved in the file `dendrogram-michelangelo.png`.
+* The dendrogram, which is saved in the file `pix/dendrogram-michelangelo.png`.
 
 <p float="left">
-    <img src="dendrogram-michelangelo.png" width="700" />
+    <img src="pix/dendrogram-michelangelo.png" width="700" />
 </p>
 
 ## Elliptical clustering
@@ -74,8 +74,38 @@ python elliptical_distribution.py --period modern
 ```
 
 The example output is listed as below for the period `classical`:
-* The elliptical clustering graph, which is saved in the file `pose_std0.5_classical.png`.
+* The elliptical clustering graph, which is saved in the file `pix/pose_std0.5_classical.png`.
 
 <p float="left">
-    <img src="pose_std0.5_classical.png" width="450" />
+    <img src="pix/pose_std0.5_classical.png" width="450" />
+</p>
+
+## Generate normalized segments by DensePose
+
+Execute one of the following commands to generate the normalized segments:
+* For one painting of one artist;
+* For all the paintings of one artist.
+
+```bash
+python visualize_rect_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
+python visualize_rect_segm.py --input datasets/modern/Paul\ Delvaux
+```
+
+The example output is listed as below:
+* The normalized segments with their widths and heights, which is saved in the file `output/norm_segm.csv`.
+
+## Visualize normalized segments by DensePose
+
+Execute the following command to visualize the normalized segments for one painting, which is based on `output/norm_segm.csv`:
+
+```bash
+python visualize_norm_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
+python visualize_norm_segm.py --input datasets/classical/Michelangelo/12758.jpg
+```
+
+The example outputs are listed as below for one painting of Paul Delvaux and Michelangelo respectively:
+
+<p float="left">
+    <img src="pix/Paul%20Delvaux_90551_norm.jpg" height="300" />
+    <img src="pix/Michelangelo_12758_norm.jpg" height="300" />
 </p>

@@ -357,4 +357,4 @@ if __name__ == '__main__':
             output_dict, output_index = process_keypoints(infile=str(path), output_dict=output_dict, output_index=output_index)
 
         df = pd.DataFrame(data=output_dict, index=output_index)
-        df.to_csv('joint_angles.csv', index=True)
+        df.to_csv('output/joint_angles.csv', index=True)

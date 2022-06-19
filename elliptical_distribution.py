@@ -321,8 +321,9 @@ def show_std_image(dict_norm_keypoints_xy, n_std, period):
 
     # save the image
     fname = 'pose_std{}_{}.png'.format(n_std, period)
-    plt.savefig(fname)
-    print('Save image in the path:', fname)
+    fpath = os.path.join('pix', fname)
+    plt.savefig(fpath)
+    print('Save image in the path:', fpath)
 
     # print the distances
     print('Nose to Neck:', _euclidian((nose_mean_x, nose_mean_y), (neck_mean_x, neck_mean_y)))

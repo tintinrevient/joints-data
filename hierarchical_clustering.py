@@ -7,7 +7,7 @@ from matplotlib.offsetbox import OffsetImage,AnnotationBbox
 
 
 # CSV data
-POSE_DATA_CSV = 'joint_angles.csv'
+POSE_DATA_CSV = os.path.join('output', 'joint_angles.csv')
 
 # all the artists
 classical_artists = ['Artemisia Gentileschi', 'El Greco', 'Michelangelo', 'Pierre-Auguste Renoir', 'Pierre-Paul Prud\'hon']
@@ -114,7 +114,7 @@ def generate_dendrogram(artist, show_pose):
         plt.axis('off')
 
     # save the plot
-    plt.savefig(outfile, bbox_inches='tight', pad_inches=0, dpi=227)
+    plt.savefig(os.path.join('pix', outfile), bbox_inches='tight', pad_inches=0, dpi=227)
 
 
 def generate_clusters(artist, num_cluster):
