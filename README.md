@@ -125,7 +125,7 @@ python visualize_avg_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg --c
 
 The example outputs are listed as below for one painting of Michelangelo:
 * The average contour of `Michelangelo`, which is saved in the file `output/contour.csv`;
-* The average contour of `Michelangelo` superimposed on the normalized segments for one of his paintings as below.
+* The average contour of `Michelangelo` (on the right) superimposed on the normalized segments (on the left) for one of his paintings as below.
 
 <p float="left">
     <img src="pix/12758_on_avg_contour_Michelangelo.jpg" height="300" />
