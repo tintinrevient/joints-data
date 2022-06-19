@@ -5,10 +5,8 @@ __pycache__/
 datasets/
 weights/
 models/
+keypoints/
 .DS_Store
-*.png
-*.jpg
-*.jpeg
 .idea/
 
 # C extensions

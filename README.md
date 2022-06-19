@@ -38,8 +38,8 @@ The example outputs are listed as below for one painting of Michelangelo:
 * The angles between each joint, which is saved in the file `output/joint_angles.csv`.
 
 <p float="left">
-    <img src="keypoints/classical/Michelangelo/1304_norm_1.png" width="200" />
-    <img src="keypoints/classical/Michelangelo/1304_norm_2.png" width="200" />
+    <img src="keypoints/classical/Michelangelo/1304_norm_1.png" height="150" />
+    <img src="keypoints/classical/Michelangelo/1304_norm_2.png" height="150" />
 </p>
 
 The length of the normalized limbs can be generated too!
@@ -108,4 +108,40 @@ The example outputs are listed as below for one painting of Paul Delvaux and Mic
 <p float="left">
     <img src="pix/Paul%20Delvaux_90551_norm.jpg" height="300" />
     <img src="pix/Michelangelo_12758_norm.jpg" height="300" />
+</p>
+
+## Generate average contour for normalized segments
+
+Execute one of the following commands to superimpose the average contour of `artist`, `man`, and `woman` on the normalized segments of the input painting:
+* Use the average contour of the artist `Michelangelo`;
+* Use the average contour of the COCO men;
+* Use the average contour of the COCO women.
+
+```bash
+python visualize_avg_segm.py --input datasets/classical/Michelangelo/12758.jpg --contour artist
+python visualize_avg_segm.py --input datasets/classical/Michelangelo/12758.jpg --contour man
+python visualize_avg_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour woman
+```
+
+The example outputs are listed as below for one painting of Michelangelo:
+* The average contour of `Michelangelo`, which is saved in the file `output/contour.csv`;
+* The average contour of `Michelangelo` superimposed on the normalized segments for one of his paintings as below.
+
+<p float="left">
+    <img src="pix/12758_on_avg_contour_Michelangelo.jpg" height="300" />
+    <img src="pix/avg_contour_Michelangelo.jpg" height="300" />
+</p>
+
+## Visualize average contour superimposed on pose
+
+Execute the following command to superimpose the average contour of `Michelangelo` to one pose from one of his paintings, which is based on `output/contour.csv`:
+
+```bash
+python visualize_contour_on_pose.py --input datasets/classical/Michelangelo/1304.jpg
+```
+
+The example output is listed as below for one painting of Michelangelo:
+
+<p float="left">
+    <img src="pix/Michelangelo_1304_avg_contour.jpg" height="300" />
 </p>
