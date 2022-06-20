@@ -143,7 +143,7 @@ python visualize_contour_on_pose.py --input datasets/classical/Michelangelo/1304
 The example output is listed as below for one painting of Michelangelo:
 
 <p float="left">
-    <img src="pix/Michelangelo_1304_avg_contour.jpg" height="300" />
+    <img src="pix/Michelangelo_12758_avg_contour.jpg" height="300" />
 </p>
 
 ## References
