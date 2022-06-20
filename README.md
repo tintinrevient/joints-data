@@ -112,7 +112,7 @@ The example outputs are listed as below for one painting of Paul Delvaux and Mic
 
 ## Generate average contour for normalized segments
 
-Execute one of the following commands to superimpose the average contour of `artist`, `man`, and `woman` on the normalized segments of the input painting:
+Execute one of the following commands to superimpose the average contour of `artist`, `man`, and `woman` on the normalized segments of the input painting, which is based on `output/norm_segm.csv`:
 * Use the average contour of the artist `Michelangelo`;
 * Use the average contour of the COCO men;
 * Use the average contour of the COCO women.
