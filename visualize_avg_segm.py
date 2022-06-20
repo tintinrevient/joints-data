@@ -48,32 +48,32 @@ def _calc_avg_contour(df_norm, index_name):
     dict_avg_contour = {}
 
     # head
-    dict_avg_contour['Head_w'] = int(df_norm['Head_w'].mean())
-    dict_avg_contour['Head_h'] = int(df_norm['Head_h'].mean())
+    dict_avg_contour['Head_w'] = int(df_norm[df_norm['Head_w'] > 0]['Head_w'].mean())
+    dict_avg_contour['Head_h'] = int(df_norm[df_norm['Head_h'] > 0]['Head_h'].mean())
 
     # torso
-    dict_avg_contour['Torso_w'] = int(df_norm['Torso_w'].mean())
-    dict_avg_contour['Torso_h'] = int(df_norm['Torso_h'].mean())
+    dict_avg_contour['Torso_w'] = int(df_norm[df_norm['Torso_w'] > 0]['Torso_w'].mean())
+    dict_avg_contour['Torso_h'] = int(df_norm[df_norm['Torso_h'] > 0]['Torso_h'].mean())
 
     # upper limbs
-    dict_avg_contour['RUpperArm_w'] = int(df_norm['RUpperArm_w'].mean())
-    dict_avg_contour['RUpperArm_h'] = int(df_norm['RUpperArm_h'].mean())
-    dict_avg_contour['RLowerArm_w'] = int(df_norm['RLowerArm_w'].mean())
-    dict_avg_contour['RLowerArm_h'] = int(df_norm['RLowerArm_h'].mean())
-    dict_avg_contour['LUpperArm_w'] = int(df_norm['LUpperArm_w'].mean())
-    dict_avg_contour['LUpperArm_h'] = int(df_norm['LUpperArm_h'].mean())
-    dict_avg_contour['LLowerArm_w'] = int(df_norm['LLowerArm_w'].mean())
-    dict_avg_contour['LLowerArm_h'] = int(df_norm['LLowerArm_h'].mean())
+    dict_avg_contour['RUpperArm_w'] = int(df_norm[df_norm['RUpperArm_w'] > 0]['RUpperArm_w'].mean())
+    dict_avg_contour['RUpperArm_h'] = int(df_norm[df_norm['RUpperArm_h'] > 0]['RUpperArm_h'].mean())
+    dict_avg_contour['RLowerArm_w'] = int(df_norm[df_norm['RLowerArm_w'] > 0]['RLowerArm_w'].mean())
+    dict_avg_contour['RLowerArm_h'] = int(df_norm[df_norm['RLowerArm_h'] > 0]['RLowerArm_h'].mean())
+    dict_avg_contour['LUpperArm_w'] = int(df_norm[df_norm['LUpperArm_w'] > 0]['LUpperArm_w'].mean())
+    dict_avg_contour['LUpperArm_h'] = int(df_norm[df_norm['LUpperArm_h'] > 0]['LUpperArm_h'].mean())
+    dict_avg_contour['LLowerArm_w'] = int(df_norm[df_norm['LLowerArm_w'] > 0]['LLowerArm_w'].mean())
+    dict_avg_contour['LLowerArm_h'] = int(df_norm[df_norm['LLowerArm_h'] > 0]['LLowerArm_h'].mean())
 
     # lower limbs
-    dict_avg_contour['RThigh_w'] = int(df_norm['RThigh_w'].mean())
-    dict_avg_contour['RThigh_h'] = int(df_norm['RThigh_h'].mean())
-    dict_avg_contour['RCalf_w'] = int(df_norm['RCalf_w'].mean())
-    dict_avg_contour['RCalf_h'] = int(df_norm['RCalf_h'].mean())
-    dict_avg_contour['LThigh_w'] = int(df_norm['LThigh_w'].mean())
-    dict_avg_contour['LThigh_h'] = int(df_norm['LThigh_h'].mean())
-    dict_avg_contour['LCalf_w'] = int(df_norm['LCalf_w'].mean())
-    dict_avg_contour['LCalf_h'] = int(df_norm['LCalf_h'].mean())
+    dict_avg_contour['RThigh_w'] = int(df_norm[df_norm['RThigh_w'] > 0]['RThigh_w'].mean())
+    dict_avg_contour['RThigh_h'] = int(df_norm[df_norm['RThigh_h'] > 0]['RThigh_h'].mean())
+    dict_avg_contour['RCalf_w'] = int(df_norm[df_norm['RCalf_w'] > 0]['RCalf_w'].mean())
+    dict_avg_contour['RCalf_h'] = int(df_norm[df_norm['RCalf_h'] > 0]['RCalf_h'].mean())
+    dict_avg_contour['LThigh_w'] = int(df_norm[df_norm['LThigh_w'] > 0]['LThigh_w'].mean())
+    dict_avg_contour['LThigh_h'] = int(df_norm[df_norm['LThigh_h'] > 0]['LThigh_h'].mean())
+    dict_avg_contour['LCalf_w'] = int(df_norm[df_norm['LCalf_w'] > 0]['LCalf_w'].mean())
+    dict_avg_contour['LCalf_h'] = int(df_norm[df_norm['LCalf_h'] > 0]['LCalf_h'].mean())
 
     # save the average contour
     df = pd.DataFrame(data=dict_avg_contour, index=[index_name])

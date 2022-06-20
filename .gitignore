@@ -6,6 +6,7 @@ datasets/
 weights/
 models/
 keypoints/
+segments/
 .DS_Store
 .idea/
 

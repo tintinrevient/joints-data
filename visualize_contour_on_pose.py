@@ -61,19 +61,34 @@ def _get_midpoints(infile, densepose_idx, keypoints):
     midpoints['Head'] = np.array([head_centroid_x, head_centroid_y])
 
     # torso midpoint
-    midpoints['Torso'] = (keypoints['Neck'] + keypoints['MidHip']) / 2
+    if np.all(keypoints['Neck'] != 0) and np.all(keypoints['MidHip'] != 0):
+        midpoints['Torso'] = (keypoints['Neck'] + keypoints['MidHip']) / 2
 
     # upper limbs
-    midpoints['RUpperArm'] = (keypoints['RShoulder'] + keypoints['RElbow']) / 2
-    midpoints['RLowerArm'] = (keypoints['RElbow'] + keypoints['RWrist']) / 2
-    midpoints['LUpperArm'] = (keypoints['LShoulder'] + keypoints['LElbow']) / 2
-    midpoints['LLowerArm'] = (keypoints['LElbow'] + keypoints['LWrist']) / 2
+    if np.all(keypoints['RShoulder'] != 0) and np.all(keypoints['RElbow'] != 0):
+       midpoints['RUpperArm'] = (keypoints['RShoulder'] + keypoints['RElbow']) / 2
+
+    if np.all(keypoints['RElbow'] != 0) and np.all(keypoints['RWrist'] != 0):
+        midpoints['RLowerArm'] = (keypoints['RElbow'] + keypoints['RWrist']) / 2
+
+    if np.all(keypoints['LShoulder'] != 0) and np.all(keypoints['LElbow'] != 0):
+        midpoints['LUpperArm'] = (keypoints['LShoulder'] + keypoints['LElbow']) / 2
+
+    if np.all(keypoints['LElbow'] != 0) and np.all(keypoints['LWrist'] != 0):
+        midpoints['LLowerArm'] = (keypoints['LElbow'] + keypoints['LWrist']) / 2
 
     # lower limbs
-    midpoints['RThigh'] = (keypoints['RHip'] + keypoints['RKnee']) / 2
-    midpoints['RCalf'] = (keypoints['RKnee'] + keypoints['RAnkle']) / 2
-    midpoints['LThigh'] = (keypoints['LHip'] + keypoints['LKnee']) / 2
-    midpoints['LCalf'] = (keypoints['LKnee'] + keypoints['LAnkle']) / 2
+    if np.all(keypoints['RHip'] != 0) and np.all(keypoints['RKnee'] != 0):
+        midpoints['RThigh'] = (keypoints['RHip'] + keypoints['RKnee']) / 2
+
+    if np.all(keypoints['RKnee'] != 0) and np.all(keypoints['RAnkle'] != 0):
+        midpoints['RCalf'] = (keypoints['RKnee'] + keypoints['RAnkle']) / 2
+
+    if np.all(keypoints['LHip'] != 0) and np.all(keypoints['LKnee'] != 0):
+        midpoints['LThigh'] = (keypoints['LHip'] + keypoints['LKnee']) / 2
+
+    if np.all(keypoints['LKnee'] != 0) and np.all(keypoints['LAnkle'] != 0):
+        midpoints['LCalf'] = (keypoints['LKnee'] + keypoints['LAnkle']) / 2
 
     return midpoints
 
@@ -136,78 +151,88 @@ def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
     scaler = 1 / dict_norm_segm['scaler']
 
     # head
-    rect = ((midpoints['Head'][0], midpoints['Head'][1]),
-            (dict_norm_segm['Head_w'] * scaler, dict_norm_segm['Head_h'] * scaler),
-            rotated_angles['Head'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Head'], thickness=thickness)
+    if 'Head' in midpoints.keys():
+        rect = ((midpoints['Head'][0], midpoints['Head'][1]),
+                (dict_norm_segm['Head_w'] * scaler, dict_norm_segm['Head_h'] * scaler),
+                rotated_angles['Head'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Head'], thickness=thickness)
 
     # torso
-    rect = ((midpoints['Torso'][0], midpoints['Torso'][1]),
-            (dict_norm_segm['Torso_w'] * scaler, dict_norm_segm['Torso_h'] * scaler),
-            rotated_angles['Torso'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Torso'], thickness=thickness)
+    if 'Torso' in midpoints.keys():
+        rect = ((midpoints['Torso'][0], midpoints['Torso'][1]),
+                (dict_norm_segm['Torso_w'] * scaler, dict_norm_segm['Torso_h'] * scaler),
+                rotated_angles['Torso'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Torso'], thickness=thickness)
 
     # upper limbs
-    rect = ((midpoints['RUpperArm'][0], midpoints['RUpperArm'][1]),
-            (dict_norm_segm['RUpperArm_w'] * scaler, dict_norm_segm['RUpperArm_h'] * scaler),
-            rotated_angles['RUpperArm'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RUpperArm'], thickness=thickness)
+    if 'RUpperArm' in midpoints.keys():
+        rect = ((midpoints['RUpperArm'][0], midpoints['RUpperArm'][1]),
+                (dict_norm_segm['RUpperArm_w'] * scaler, dict_norm_segm['RUpperArm_h'] * scaler),
+                rotated_angles['RUpperArm'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RUpperArm'], thickness=thickness)
 
-    rect = ((midpoints['RLowerArm'][0], midpoints['RLowerArm'][1]),
-            (dict_norm_segm['RLowerArm_w'] * scaler, dict_norm_segm['RLowerArm_h'] * scaler),
-            rotated_angles['RLowerArm'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RLowerArm'], thickness=thickness)
+    if 'RLowerArm' in midpoints.keys():
+        rect = ((midpoints['RLowerArm'][0], midpoints['RLowerArm'][1]),
+                (dict_norm_segm['RLowerArm_w'] * scaler, dict_norm_segm['RLowerArm_h'] * scaler),
+                rotated_angles['RLowerArm'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RLowerArm'], thickness=thickness)
 
-    rect = ((midpoints['LUpperArm'][0], midpoints['LUpperArm'][1]),
-            (dict_norm_segm['LUpperArm_w'] * scaler, dict_norm_segm['LUpperArm_h'] * scaler),
-            rotated_angles['LUpperArm'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LUpperArm'], thickness=thickness)
+    if 'LUpperArm' in midpoints.keys():
+        rect = ((midpoints['LUpperArm'][0], midpoints['LUpperArm'][1]),
+                (dict_norm_segm['LUpperArm_w'] * scaler, dict_norm_segm['LUpperArm_h'] * scaler),
+                rotated_angles['LUpperArm'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LUpperArm'], thickness=thickness)
 
-    rect = ((midpoints['LLowerArm'][0], midpoints['LLowerArm'][1]),
-            (dict_norm_segm['LLowerArm_w'] * scaler, dict_norm_segm['LLowerArm_h'] * scaler),
-            rotated_angles['LLowerArm'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LLowerArm'], thickness=thickness)
+    if 'LLowerArm' in midpoints.keys():
+        rect = ((midpoints['LLowerArm'][0], midpoints['LLowerArm'][1]),
+                (dict_norm_segm['LLowerArm_w'] * scaler, dict_norm_segm['LLowerArm_h'] * scaler),
+                rotated_angles['LLowerArm'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LLowerArm'], thickness=thickness)
 
     # lower limbs
-    rect = ((midpoints['RThigh'][0], midpoints['RThigh'][1]),
-            (dict_norm_segm['RThigh_w'] * scaler, dict_norm_segm['RThigh_h'] * scaler),
-            rotated_angles['RThigh'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RThigh'], thickness=thickness)
+    if 'RThigh' in midpoints.keys():
+        rect = ((midpoints['RThigh'][0], midpoints['RThigh'][1]),
+                (dict_norm_segm['RThigh_w'] * scaler, dict_norm_segm['RThigh_h'] * scaler),
+                rotated_angles['RThigh'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RThigh'], thickness=thickness)
 
-    rect = ((midpoints['RCalf'][0], midpoints['RCalf'][1]),
-            (dict_norm_segm['RCalf_w'] * scaler, dict_norm_segm['RCalf_h'] * scaler),
-            rotated_angles['RCalf'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RCalf'], thickness=thickness)
+    if 'RCalf' in midpoints.keys():
+        rect = ((midpoints['RCalf'][0], midpoints['RCalf'][1]),
+                (dict_norm_segm['RCalf_w'] * scaler, dict_norm_segm['RCalf_h'] * scaler),
+                rotated_angles['RCalf'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RCalf'], thickness=thickness)
 
-    rect = ((midpoints['LThigh'][0], midpoints['LThigh'][1]),
-            (dict_norm_segm['LThigh_w'] * scaler, dict_norm_segm['LThigh_h'] * scaler),
-            rotated_angles['LThigh'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LThigh'], thickness=thickness)
+    if 'LThigh' in midpoints.keys():
+        rect = ((midpoints['LThigh'][0], midpoints['LThigh'][1]),
+                (dict_norm_segm['LThigh_w'] * scaler, dict_norm_segm['LThigh_h'] * scaler),
+                rotated_angles['LThigh'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LThigh'], thickness=thickness)
 
-    rect = ((midpoints['LCalf'][0], midpoints['LCalf'][1]),
-            (dict_norm_segm['LCalf_w'] * scaler, dict_norm_segm['LCalf_h'] * scaler),
-            rotated_angles['LCalf'])
-    box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
-    box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LCalf'], thickness=thickness)
+    if 'LCalf' in midpoints.keys():
+        rect = ((midpoints['LCalf'][0], midpoints['LCalf'][1]),
+                (dict_norm_segm['LCalf_w'] * scaler, dict_norm_segm['LCalf_h'] * scaler),
+                rotated_angles['LCalf'])
+        box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LCalf'], thickness=thickness)
 
 
 def visualize(infile, openpose_idx, densepose_idx):
@@ -232,13 +257,13 @@ def visualize(infile, openpose_idx, densepose_idx):
 
     # step 3.1: load the data of contour
     df_contour = pd.read_csv(fname_contour, index_col=0).astype('float32')
-    # dict_norm_segm = df_contour.loc['impressionism']
-    dict_norm_segm = df_contour.loc['Michelangelo']
+    artist = infile.split('/')[2]
+    dict_avg_contour_segm = df_contour.loc[artist]
 
     df_norm_segm = pd.read_csv(fname_norm_segm, index_col=0)
     index_name = generate_index_name(infile, openpose_idx)
-    dict_norm_segm['scaler'] = df_norm_segm.loc[index_name]['scaler']
-    print(dict_norm_segm)
+    dict_avg_contour_segm['scaler'] = df_norm_segm.loc[index_name]['scaler']
+    print(dict_avg_contour_segm)
 
     # step 3.2: draw the norm_segm on the original image
     # load the original image
@@ -246,7 +271,7 @@ def visualize(infile, openpose_idx, densepose_idx):
     im_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     im_gray = np.tile(im_gray[:, :, np.newaxis], [1, 1, 3])
     # draw norm_segm
-    _draw_norm_segm(im_gray, midpoints, rotated_angles, dict_norm_segm)
+    _draw_norm_segm(im_gray, midpoints, rotated_angles, dict_avg_contour_segm)
 
     # test
     # cv2.circle(im_gray, (int(midpoints['Torso'][0]), int(midpoints['Torso'][1])), radius=10, color=(0, 255, 0), thickness=-1)
@@ -287,7 +312,7 @@ def generate_index_name(infile, openpose_idx):
 if __name__ == '__main__':
 
     # settings
-    thickness = 5
+    thickness = 3
 
     # classical
     # python visualize_contour_on_pose.py --input datasets/classical/Michelangelo/1304.jpg

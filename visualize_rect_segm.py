@@ -107,9 +107,8 @@ def _is_valid(keypoints):
 
     # filter the main keypoints by score > 0
     filtered_keypoints = [key for key, value in keypoints.items() if key in main_keypoints and value[2] > 0]
-    print('Number of valid keypoints (must be equal to 7):', len(filtered_keypoints))
-
-    if len(filtered_keypoints) != 7:
+    if len(filtered_keypoints) < 6:
+        print('Number of valid keypoints (must be >= 6):', len(filtered_keypoints))
         return False
     else:
         return True
@@ -262,7 +261,8 @@ def _calc_angle(point1, center, point2):
 
         return rad, deg
 
-    except:
+    except Exception as ex:
+        print(ex)
         return 0, 0
 
 
@@ -453,15 +453,17 @@ def _draw_one_segm_bbox(image, segm_id, segm_xy):
     global bbox_segm_dict
 
     # remove outliers
-    print('Before removing outliers:', len(segm_xy))
+    # print('Before removing outliers:', len(segm_xy))
     segm_xy = np.array(_remove_outlier(segm_xy=segm_xy)).astype(int)
-    print('After removing outliers:', len(segm_xy))
+    # print('After removing outliers:', len(segm_xy))
 
     # get the minimum bounding rectangle of segm_xy
     try:
         rect_xy = _get_min_bounding_rect(segm_xy)
-    except:
+    except Exception as ex:
+        print(ex)
         return
+
     cv2.fillPoly(image, [rect_xy], COARSE_TO_COLOR[segm_id])
 
     dist1 = _euclidian(rect_xy[0], rect_xy[1])
@@ -575,12 +577,9 @@ def _draw_one_norm_segm(image, segm_id, norm_midpoint):
         half_h = temp_segm_dict[segm_id]['half_h']
         half_w = temp_segm_dict[segm_id]['half_w']
 
-    # if the segment does not exist on both left and right side, return!!!
-    if half_h < 1 or half_w < 1:
-        return
-
-    norm_segm_dict[segm_id + '_w'] = int(half_w * 2)
-    norm_segm_dict[segm_id + '_h'] = int(half_h * 2)
+    # if the segment does not exist on both left and right side, assign 0 as default
+    norm_segm_dict[segm_id + '_w'] = int(half_w * 2) if half_w >= 1 and half_h >= 1 else 0
+    norm_segm_dict[segm_id + '_h'] = int(half_h * 2) if half_w >= 1 and half_h >= 1 else 0
 
     img_bg = np.empty((int(half_h*2), int(half_w*2), 4), np.uint8)
     img_bg.fill(255)
@@ -598,7 +597,10 @@ def _draw_one_norm_segm(image, segm_id, norm_midpoint):
     # draw the normalized segment
     if img_bg.shape == image[min_y:max_y, min_x:max_x, :].shape:
         added_image = cv2.addWeighted(image[min_y:max_y, min_x:max_x, :], 0.1, img_bg, 0.9, 0)
-        image[min_y:max_y, min_x:max_x, :] = added_image
+        try:
+            image[min_y:max_y, min_x:max_x, :] = added_image
+        except TypeError as ex:
+            print(ex)
 
     # draw the normalized midpoint
     cv2.circle(image, tuple(norm_midpoint), radius=2, color=(255, 0, 255), thickness=-1)
@@ -783,18 +785,21 @@ def visualize(infile, score_cutoff):
     # boxes_xywh: tensor -> numpy array
     try:
         people_box_xywh = people_box_xywh.numpy()
-    except AttributeError:
+    except AttributeError as ex:
+        print(ex)
         return
 
     # load keypoints
     file_keypoints = os.path.join(openpose_keypoints_dir, '{}_keypoints.npy'.format(infile[infile.find('/') + 1:infile.rfind('.')]))
     try:
         people_keypoints = np.load(file_keypoints, allow_pickle='TRUE').item()['keypoints']
-    except FileNotFoundError:
+    except FileNotFoundError as ex:
+        print(ex)
         return
 
-    print('size of keypoints:', len(people_keypoints))
-    print('size of densepose:', len(people_densepose))
+    if len(people_keypoints) < 1 or len(people_densepose) < 1:
+        print('Size of keypoints:', len(people_keypoints), 'Size of densepose:', len(people_densepose))
+        return
 
     matched_densepose, matched_box_xywh, matched_keypoints = _match(people_densepose, people_box_xywh, people_keypoints)
 
