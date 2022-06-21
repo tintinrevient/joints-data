@@ -176,7 +176,7 @@ python visualize_rect_segm_coco.py --image 253835 --gender woman
 ```
 
 The example output is listed as below:
-* The image is saved in the file ``.
+* The image is saved in the file `pix/253835_woman_norm.jpg`.
 
 ## References
 
