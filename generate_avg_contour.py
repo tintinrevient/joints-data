@@ -2,7 +2,7 @@ import os, cv2, re
 import numpy as np
 import argparse
 import pandas as pd
-from visualize_rect_segm import (
+from generate_rect_segm import (
     COARSE_TO_COLOR
 )
 
@@ -383,14 +383,14 @@ if __name__ == '__main__':
     color = (255, 0, 255)
 
     # modern
-    # python visualize_avg_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour artist
-    # python visualize_avg_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour woman
-    # python visualize_avg_segm.py --input datasets/modern/Paul\ Gauguin/30963.jpg --contour artist
+    # python generate_avg_contour.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour artist
+    # python generate_avg_contour.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour woman
+    # python generate_avg_contour.py --input datasets/modern/Paul\ Gauguin/30963.jpg --contour artist
 
     # classical
-    # python visualize_avg_segm.py --input datasets/classical/Michelangelo/12758.jpg --contour artist
-    # python visualize_avg_segm.py --input datasets/classical/Michelangelo/12758.jpg --contour man
-    # python visualize_avg_segm.py --input datasets/classical/Artemisia\ Gentileschi/45093.jpg --contour artist
+    # python generate_avg_contour.py --input datasets/classical/Michelangelo/12758.jpg --contour artist
+    # python generate_avg_contour.py --input datasets/classical/Michelangelo/12758.jpg --contour man
+    # python generate_avg_contour.py --input datasets/classical/Artemisia\ Gentileschi/45093.jpg --contour artist
 
     parser = argparse.ArgumentParser(description='DensePose - Visualize the dilated and symmetrical segment')
     parser.add_argument('--input', help='Path to image file')

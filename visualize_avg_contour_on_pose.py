@@ -6,7 +6,7 @@ from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 from densepose.config import add_densepose_config
 from densepose.vis.extractor import DensePoseResultExtractor
-from visualize_rect_segm import (
+from generate_rect_segm import (
     openpose_keypoints_dir, JOINT_ID, COARSE_TO_COLOR,
     _extract_segm, _segm_xy, _segm_xy_centroid, _calc_angle
 )
@@ -315,7 +315,7 @@ if __name__ == '__main__':
     thickness = 3
 
     # classical
-    # python visualize_contour_on_pose.py --input datasets/classical/Michelangelo/1304.jpg
+    # python visualize_avg_contour_on_pose.py --input datasets/classical/Michelangelo/1304.jpg
 
     parser = argparse.ArgumentParser(description='DensePose - Visualize the dilated and symmetrical segment')
     parser.add_argument('--input', help='Path to image file')

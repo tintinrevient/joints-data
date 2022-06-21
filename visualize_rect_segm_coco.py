@@ -1,79 +1,35 @@
-import os, cv2, re
+import os, cv2
 import numpy as np
 import argparse
 import pandas as pd
-from detectron2.engine import DefaultPredictor
-from detectron2.config import get_cfg
-from densepose.config import add_densepose_config
-from densepose.vis.extractor import DensePoseResultExtractor
-from visualize_rect_segm import (
-    openpose_keypoints_dir, JOINT_ID, COARSE_TO_COLOR,
-    _extract_segm, _segm_xy, _segm_xy_centroid, _calc_angle
+from pycocotools.coco import COCO
+from densepose.structures import DensePoseDataRelative
+from generate_rect_segm_coco import (
+    COARSE_TO_COLOR,
+    _calc_angle, _get_dp_mask, _segm_xy_centroid, _get_dict_of_midpoints, _get_dict_of_segm_and_keypoints
 )
 
 
 # the path to the data of norm_segm.csv
-fname_norm_segm = os.path.join('output', 'norm_segm.csv')
+fname_norm_segm_coco_man = os.path.join('output', 'norm_segm_coco_man.csv')
+fname_norm_segm_coco_woman = os.path.join('output', 'norm_segm_coco_woman.csv')
+
+# dataset setting
+coco_folder = os.path.join('datasets', 'coco')
+
+# dense_pose annotation
+dp_coco = COCO(os.path.join(coco_folder, 'annotations', 'densepose_minival2014.json'))
+
+# caption annotation
+caption_coco = COCO(os.path.join(coco_folder, 'annotations', 'captions_val2014.json'))
 
 
-def _get_head_segm_centroid(infile, densepose_idx):
-
-    image = cv2.imread(infile)
-
-    cfg = get_cfg()
-    add_densepose_config(cfg)
-    cfg.MODEL.DEVICE = 'cpu'
-
-    cfg.merge_from_file('./configs/densepose_rcnn_R_50_FPN_s1x.yaml')
-    cfg.MODEL.WEIGHTS = './models/densepose_rcnn_R_50_FPN_s1x.pkl'
-
-    predictor = DefaultPredictor(cfg)
-    outputs = predictor(image)
-
-    # filter the probabilities of scores for each bbox > score_cutoff
-    instances = outputs['instances']
-    confident_detections = instances[instances.scores > 0.95]
-
-    # extractor
-    extractor = DensePoseResultExtractor()
-    results_densepose, boxes_xywh = extractor(confident_detections)
-
-    # extract the segment
-    mask, segm = _extract_segm(result_densepose=results_densepose[densepose_idx])
-
-    # get x and y of the head segment
-    head_xy = _segm_xy(segm=segm, segm_id=14, box_xywh=boxes_xywh[densepose_idx])
+def _get_head_segm_centroid(head_xy):
 
     # get the centroid of the head segment
     head_centroid_x, head_centroid_y = _segm_xy_centroid(head_xy)
 
     return head_centroid_x, head_centroid_y
-
-
-def _get_midpoints(infile, densepose_idx, keypoints):
-
-    midpoints = {}
-
-    # head centroid
-    head_centroid_x, head_centroid_y = _get_head_segm_centroid(infile, densepose_idx)
-    midpoints['Head'] = np.array([head_centroid_x, head_centroid_y])
-
-    # torso midpoint
-    midpoints['Torso'] = (keypoints['Neck'] + keypoints['MidHip']) / 2
-
-    # upper limbs
-    midpoints['RUpperArm'] = (keypoints['RShoulder'] + keypoints['RElbow']) / 2
-    midpoints['RLowerArm'] = (keypoints['RElbow'] + keypoints['RWrist']) / 2
-    midpoints['LUpperArm'] = (keypoints['LShoulder'] + keypoints['LElbow']) / 2
-    midpoints['LLowerArm'] = (keypoints['LElbow'] + keypoints['LWrist']) / 2
-
-    # lower limbs
-    midpoints['RThigh'] = (keypoints['RHip'] + keypoints['RKnee']) / 2
-    midpoints['RCalf'] = (keypoints['RKnee'] + keypoints['RAnkle']) / 2
-    midpoints['LThigh'] = (keypoints['LHip'] + keypoints['LKnee']) / 2
-    midpoints['LCalf'] = (keypoints['LKnee'] + keypoints['LAnkle']) / 2
-
-    return midpoints
 
 
 def _get_rotated_angles(keypoints, midpoints):
@@ -208,72 +164,83 @@ def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
     cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LCalf'], thickness=thickness)
 
 
-def visualize(infile, openpose_idx, densepose_idx):
+def visualize(image_id, person_index, gender):
 
-    # step 1: load keypoints
-    file_keypoints = os.path.join(openpose_keypoints_dir,
-                                  '{}_keypoints.npy'.format(infile[infile.find('/') + 1:infile.rfind('.')]))
-    data_keypoints = np.load(file_keypoints, allow_pickle='TRUE').item()['keypoints']
+    entry = dp_coco.loadImgs(image_id)[0]
 
-    # zip the joint ID with the data_keypoints
-    # data_keypoints contains the list of the keypoints for all the people in one image
-    keypoints = dict(zip(JOINT_ID, data_keypoints[openpose_idx-1]))
-    print('keypoints:', keypoints)
+    dataset_name = entry['file_name'][entry['file_name'].find('_') + 1:entry['file_name'].rfind('_')]
+    image_fpath = os.path.join(coco_folder, dataset_name, entry['file_name'])
 
-    # step 2.1: get all the midpoints
-    midpoints = _get_midpoints(infile, densepose_idx-1, keypoints)
-    print('midpoints:', midpoints)
+    print('image_fpath:', image_fpath)
 
-    # step 2.2: get the rotation angles
-    rotated_angles = _get_rotated_angles(keypoints, midpoints)
-    print('rotated_angles:', rotated_angles)
-
-    # step 3.1: load the data of norm_segm
-    df_norm_segm = pd.read_csv(fname_norm_segm, index_col=0)
-    index_name = generate_index_name(infile, openpose_idx)
-    dict_norm_segm = df_norm_segm.loc[index_name]
-    print(dict_norm_segm)
-
-    # step 3.2: draw the norm_segm on the original image
-    # load the original image
-    image = cv2.imread(infile)
-    im_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    im_gray = cv2.imread(image_fpath, cv2.IMREAD_GRAYSCALE)
     im_gray = np.tile(im_gray[:, :, np.newaxis], [1, 1, 3])
-    # draw norm_segm
-    _draw_norm_segm(im_gray, midpoints, rotated_angles, dict_norm_segm)
 
-    # debug
-    # cv2.circle(im_gray, (int(midpoints['Torso'][0]), int(midpoints['Torso'][1])), radius=10, color=(0, 255, 0), thickness=-1)
-    # cv2.circle(im_gray, (int(keypoints['Neck'][0]), int(keypoints['Neck'][1])), radius=10, color=(0, 255, 255), thickness=-1)
-    # cv2.circle(im_gray, (int(keypoints['MidHip'][0]), int(keypoints['MidHip'][1])), radius=10, color=(255, 0, 255), thickness=-1)
+    dp_annotation_ids = dp_coco.getAnnIds(imgIds=entry['id'])
+    dp_annotations = dp_coco.loadAnns(dp_annotation_ids)
 
-    # save the final image
-    fpath = infile.split('/')
-    artist = fpath[2]
-    fname = fpath[3][:fpath[3].rfind('.')]
-    fnorm = '{}_{}_norm.jpg'.format(artist, fname)
-    cv2.imwrite(os.path.join('pix', fnorm), im_gray)
+    # iterate through all the people in one image
+    for dp_annotation in dp_annotations:
 
-    # show the final image
-    image_window = 'image'
-    cv2.imshow(image_window, im_gray)
-    cv2.setWindowProperty(image_window, cv2.WND_PROP_TOPMOST, 1)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        # check the validity of annotation
+        is_valid, _ = DensePoseDataRelative.validate_annotation(dp_annotation)
+
+        if not is_valid:
+            continue
+
+        # 1. keypoints
+        keypoints = dp_annotation['keypoints']
+
+        # 2. bbox
+        bbox_xywh = np.array(dp_annotation["bbox"]).astype(int)
+
+        # 3. segments of dense_pose
+        if ('dp_masks' in dp_annotation.keys()):
+            mask = _get_dp_mask(dp_annotation['dp_masks'])
+
+            x1, y1, x2, y2 = bbox_xywh[0], bbox_xywh[1], bbox_xywh[0] + bbox_xywh[2], bbox_xywh[1] + bbox_xywh[3]
+
+            x2 = min([x2, im_gray.shape[1]])
+            y2 = min([y2, im_gray.shape[0]])
+
+            segm = cv2.resize(mask, (int(x2 - x1), int(y2 - y1)), interpolation=cv2.INTER_NEAREST)
+
+        # step 1. get segm_xy + keypoints dict
+        segm_xy_dict, keypoints_dict = _get_dict_of_segm_and_keypoints(segm, keypoints, bbox_xywh)
+
+        # step 2: get all the midpoints
+        midpoints_dict = _get_dict_of_midpoints(segm_xy_dict, keypoints_dict)
+
+        # step 3: get the rotation angles
+        rotated_angles = _get_rotated_angles(keypoints_dict, midpoints_dict)
+
+        # step 4: load the data of norm_segm
+        if gender == 'man':
+            df_norm_segm = pd.read_csv(fname_norm_segm_coco_man, index_col=0)
+        elif gender == 'woman':
+            df_norm_segm = pd.read_csv(fname_norm_segm_coco_woman, index_col=0)
+
+        index_name = generate_index_name(image_id, person_index)
+        dict_norm_segm = df_norm_segm.loc[index_name]
+
+        # step 5: draw the norm_segm on the original image
+        _draw_norm_segm(im_gray, midpoints_dict, rotated_angles, dict_norm_segm)
+
+        # save the final image
+        fnorm = '{}_{}_norm.jpg'.format(image_id, gender)
+        cv2.imwrite(os.path.join('pix', fnorm), im_gray)
+
+        # show the final image
+        image_window = 'image'
+        cv2.imshow(image_window, im_gray)
+        cv2.setWindowProperty(image_window, cv2.WND_PROP_TOPMOST, 1)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
-def generate_index_name(infile, openpose_idx):
+def generate_index_name(image_id, person_index):
 
-    # each artist
-    iter_list = [iter.start() for iter in re.finditer(r"/", infile)]
-    artist = infile[iter_list[1] + 1:iter_list[2]]
-    painting_number = infile[iter_list[2] + 1:infile.rfind('.')]
-
-    # impressionism
-    # artist = 'Impressionism'
-    # painting_number = int(infile[infile.rfind('/')+1:infile.rfind('.')])
-
-    index_name = '{}_{}_{}'.format(artist, painting_number, openpose_idx)
+    index_name = '{}_{}'.format(image_id, person_index)
 
     return index_name
 
@@ -283,20 +250,16 @@ if __name__ == '__main__':
     # settings
     thickness = 2
 
-    # modern
-    # python visualize_norm_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
-    # python visualize_norm_segm.py --input datasets/modern/Paul\ Gauguin/30963.jpg
+    # gender = woman
+    image_id = 253835
 
-    # classical
-    # python visualize_norm_segm.py --input datasets/classical/Michelangelo/12758.jpg
-    # python visualize_norm_segm.py --input datasets/classical/Artemisia\ Gentileschi/45093.jpg
+    # gender = man
+    # image_id = 262335
 
     parser = argparse.ArgumentParser(description='DensePose - Visualize the dilated and symmetrical segment')
-    parser.add_argument('--input', help='Path to image file')
+    parser.add_argument('--image', help='Image ID')
+    parser.add_argument('--gender', help='Gender - man or woman')
     args = parser.parse_args()
 
-    # for a single person in one image: openpose_idx=1, densepose_idx=1
-    # for multiple people in one image: openpose_idx might or might not be equal to densepose_idx
-    # Hint 1: the head will match if openpose_idx is matched with densepose_idx!
-    # Hint 2: Paul Delvaux_69696_3 -> 3 = openpose_idx!
-    visualize(infile=args.input, openpose_idx=1, densepose_idx=1)
+    # python visualize_rect_segm_coco.py --image 253835 --gender woman
+    visualize(image_id=int(args.image), person_index=1, gender=args.gender)

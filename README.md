@@ -87,8 +87,8 @@ Execute one of the following commands to generate the normalized segments:
 * For all the paintings of one artist.
 
 ```bash
-python visualize_rect_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
-python visualize_rect_segm.py --input datasets/modern/Paul\ Delvaux
+python generate_rect_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
+python generate_rect_segm.py --input datasets/modern/Paul\ Delvaux
 ```
 
 The example output is listed as below:
@@ -99,8 +99,8 @@ The example output is listed as below:
 Execute the following command to visualize the normalized segments for one painting, which is based on `output/norm_segm.csv`:
 
 ```bash
-python visualize_norm_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
-python visualize_norm_segm.py --input datasets/classical/Michelangelo/12758.jpg
+python visualize_rect_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg
+python visualize_rect_segm.py --input datasets/classical/Michelangelo/12758.jpg
 ```
 
 The example outputs are listed as below for one painting of Paul Delvaux and Michelangelo respectively:
@@ -112,19 +112,21 @@ The example outputs are listed as below for one painting of Paul Delvaux and Mic
 
 ## Generate average contour for normalized segments
 
-Execute one of the following commands to superimpose the average contour of `artist`, `man`, and `woman` on the normalized segments of the input painting, which is based on `output/norm_segm.csv`:
+Execute one of the following commands to generate and superimpose the average contour of `artist`, `man`, and `woman` on the normalized segments of the input painting, which is based on `output/norm_segm.csv`:
 * Use the average contour of the artist `Michelangelo`;
 * Use the average contour of the COCO men;
 * Use the average contour of the COCO women.
 
 ```bash
-python visualize_avg_segm.py --input datasets/classical/Michelangelo/12758.jpg --contour artist
-python visualize_avg_segm.py --input datasets/classical/Michelangelo/12758.jpg --contour man
-python visualize_avg_segm.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour woman
+python generate_avg_contour.py --input datasets/classical/Michelangelo/12758.jpg --contour artist
+python generate_avg_contour.py --input datasets/classical/Michelangelo/12758.jpg --contour man
+python generate_avg_contour.py --input datasets/modern/Paul\ Delvaux/90551.jpg --contour woman
 ```
 
 The example outputs are listed as below for one painting of Michelangelo:
 * The average contour of `Michelangelo`, which is saved in the file `output/contour.csv`;
+* The average contour of `Michelangelo`, which is saved in the file `pix/avg_contour_Michelangelo.jpg`;
+* The average contour superimposed on the norm segments of `Michelangelo`, which is saved in the file `pix/12758_on_avg_contour_Michelangelo.jpg`;
 * The average contour of `Michelangelo` (on the right) superimposed on the normalized segments (on the left) for one of his paintings as below.
 
 <p float="left">
@@ -137,15 +139,48 @@ The example outputs are listed as below for one painting of Michelangelo:
 Execute the following command to superimpose the average contour of `Michelangelo` to one pose from one of his paintings, which is based on `output/contour.csv`:
 
 ```bash
-python visualize_contour_on_pose.py --input datasets/classical/Michelangelo/1304.jpg
+python visualize_avg_contour_on_pose.py --input datasets/classical/Michelangelo/1304.jpg
 ```
 
 The example output is listed as below for one painting of Michelangelo:
+* The image is saved in the file `pix/Michelangelo_1304_avg_contour.jpg`.
 
 <p float="left">
-    <img src="pix/Michelangelo_12758_avg_contour.jpg" height="300" />
+    <img src="pix/Michelangelo_1304_avg_contour.jpg" height="300" />
 </p>
+
+## Generate normalized segments for COCO people
+
+Execute one of the following commands to generate the normalized segments for COCO `val2014` dataset `man` and `woman`:
+* Generate the normalized segments for the COCO man;
+* Generate the normalized segments for the COCO woman.
+
+```bash
+python generate_rect_segm_coco.py --gender man
+python generate_rect_segm_coco.py --gender woman
+```
+
+The example output is listed as below:
+* The normalized segments data for man, which is saved in the file `output/norm_segm_coco_man.csv`;
+* The normalized segments data for woman, which is saved in the file `output/norm_segm_coco_woman.csv`;
+
+## Visualize normalized segments for COCO people
+
+Execute one of the following commands to visualize the normalized segments for COCO `val2014` dataset `man` and `woman`, given the image ID:
+* Visualize the normalized segments for the COCO man;
+* Visualize the normalized segments for the COCO woman.
+
+```bash
+python visualize_rect_segm_coco.py --image 262335 --gender man
+python visualize_rect_segm_coco.py --image 253835 --gender woman
+```
+
+The example output is listed as below:
+* The image is saved in the file ``.
 
 ## References
 
 * https://github.com/facebookresearch/detectron2/pull/1974
+* https://cocodataset.org/#download
+* https://github.com/facebookresearch/detectron2/blob/main/projects/DensePose/doc/DENSEPOSE_DATASETS.md  
+* https://github.com/facebookresearch/detectron2/blob/main/projects/DensePose/doc/DENSEPOSE_CSE.md
