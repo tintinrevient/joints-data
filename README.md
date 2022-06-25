@@ -171,12 +171,17 @@ Execute one of the following commands to visualize the normalized segments for C
 * Visualize the normalized segments for the COCO woman.
 
 ```bash
-python visualize_rect_segm_coco.py --image 262335 --gender man
-python visualize_rect_segm_coco.py --image 253835 --gender woman
+python visualize_rect_segm_coco.py --image 25057 --gender man
+python visualize_rect_segm_coco.py --image 54931 --gender woman
 ```
 
 The example output is listed as below:
-* The image is saved in the file `pix/253835_woman_norm.jpg`.
+* The image is saved in the file `pix/54931_woman_norm.jpg`.
+
+<p float="left">
+    <img src="pix/25057_man_norm.jpg" height="300" />
+    <img src="pix/54931_woman_norm.jpg" height="300" />
+</p>
 
 ## References
 
