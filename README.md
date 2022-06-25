@@ -201,7 +201,7 @@ The example outputs are listed as below for one COCO image `COCO_val2014_0000000
 
 ## Warping
 
-Execute the following command to warp a pose based on the specified painter's average contour:
+Execute the following command to warp a pose based on the specified artist's average contour:
 
 ```bash
 python warp.py --artist "Paul Gauguin"
