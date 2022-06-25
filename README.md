@@ -134,7 +134,7 @@ The example outputs are listed as below for one painting of Michelangelo:
     <img src="pix/avg_contour_Michelangelo.jpg" height="300" />
 </p>
 
-## Visualize average contour superimposed on pose
+## Visualize average contour superimposed on paintings
 
 Execute the following command to superimpose the average contour of `Michelangelo` to one pose from one of his paintings, which is based on `output/contour.csv`:
 
@@ -181,6 +181,21 @@ The example output is listed as below:
 <p float="left">
     <img src="pix/25057_man_norm.jpg" height="300" />
     <img src="pix/54931_woman_norm.jpg" height="300" />
+</p>
+
+## Visualize average contour superimposed on COCO people
+
+Execute the following command to superimpose the average contour of `Paul Gauguin` to the COCO person, which is based on `output/contour.csv`:
+
+```bash
+python visualize_rect_segm_coco.py --image 54931 --gender woman --artist "Paul Gauguin"
+```
+
+The example output is listed as below for one COCO image `datasets/coco/val2014/COCO_val2014_000000054931.jpg`:
+* The image is saved in the file `pix/Michelangelo_1304_avg_contour.jpg`.
+
+<p float="left">
+    <img src="pix/54931_woman_norm_with_Paul%20Gauguin_contour.jpg" height="300" />
 </p>
 
 ## References

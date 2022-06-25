@@ -14,6 +14,9 @@ from generate_rect_segm_coco import (
 fname_norm_segm_coco_man = os.path.join('output', 'norm_segm_coco_man.csv')
 fname_norm_segm_coco_woman = os.path.join('output', 'norm_segm_coco_woman.csv')
 
+# the path to the data of contour.csv
+fname_contour = os.path.join('output', 'contour.csv')
+
 # dataset setting
 coco_folder = os.path.join('datasets', 'coco')
 
@@ -84,7 +87,7 @@ def _get_rotated_angles(keypoints, midpoints):
     return rotated_angles
 
 
-def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
+def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm, is_contour):
 
     # scaler
     scaler = 1 / dict_norm_segm['scaler']
@@ -95,7 +98,7 @@ def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
             rotated_angles['Head'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Head'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Head'] if not is_contour else color, thickness=thickness)
 
     # torso
     rect = ((midpoints['Torso'][0], midpoints['Torso'][1]),
@@ -103,7 +106,7 @@ def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
             rotated_angles['Torso'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Torso'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['Torso'] if not is_contour else color, thickness=thickness)
 
     # upper limbs
     rect = ((midpoints['RUpperArm'][0], midpoints['RUpperArm'][1]),
@@ -111,28 +114,28 @@ def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
             rotated_angles['RUpperArm'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RUpperArm'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RUpperArm'] if not is_contour else color, thickness=thickness)
 
     rect = ((midpoints['RLowerArm'][0], midpoints['RLowerArm'][1]),
             (dict_norm_segm['RLowerArm_w'] * scaler, dict_norm_segm['RLowerArm_h'] * scaler),
             rotated_angles['RLowerArm'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RLowerArm'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RLowerArm'] if not is_contour else color, thickness=thickness)
 
     rect = ((midpoints['LUpperArm'][0], midpoints['LUpperArm'][1]),
             (dict_norm_segm['LUpperArm_w'] * scaler, dict_norm_segm['LUpperArm_h'] * scaler),
             rotated_angles['LUpperArm'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LUpperArm'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LUpperArm'] if not is_contour else color, thickness=thickness)
 
     rect = ((midpoints['LLowerArm'][0], midpoints['LLowerArm'][1]),
             (dict_norm_segm['LLowerArm_w'] * scaler, dict_norm_segm['LLowerArm_h'] * scaler),
             rotated_angles['LLowerArm'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LLowerArm'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LLowerArm'] if not is_contour else color, thickness=thickness)
 
     # lower limbs
     rect = ((midpoints['RThigh'][0], midpoints['RThigh'][1]),
@@ -140,31 +143,31 @@ def _draw_norm_segm(image, midpoints, rotated_angles, dict_norm_segm):
             rotated_angles['RThigh'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RThigh'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RThigh'] if not is_contour else color, thickness=thickness)
 
     rect = ((midpoints['RCalf'][0], midpoints['RCalf'][1]),
             (dict_norm_segm['RCalf_w'] * scaler, dict_norm_segm['RCalf_h'] * scaler),
             rotated_angles['RCalf'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RCalf'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['RCalf'] if not is_contour else color, thickness=thickness)
 
     rect = ((midpoints['LThigh'][0], midpoints['LThigh'][1]),
             (dict_norm_segm['LThigh_w'] * scaler, dict_norm_segm['LThigh_h'] * scaler),
             rotated_angles['LThigh'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LThigh'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LThigh'] if not is_contour else color, thickness=thickness)
 
     rect = ((midpoints['LCalf'][0], midpoints['LCalf'][1]),
             (dict_norm_segm['LCalf_w'] * scaler, dict_norm_segm['LCalf_h'] * scaler),
             rotated_angles['LCalf'])
     box = cv2.boxPoints(rect)  # cv2.boxPoints(rect) for OpenCV 3.x
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LCalf'], thickness=thickness)
+    cv2.drawContours(image, [box], 0, color=COARSE_TO_COLOR['LCalf'] if not is_contour else color, thickness=thickness)
 
 
-def visualize(image_id, person_index, gender):
+def visualize(image_id, person_index, gender, artist):
 
     entry = dp_coco.loadImgs(image_id)[0]
 
@@ -224,10 +227,20 @@ def visualize(image_id, person_index, gender):
         dict_norm_segm = df_norm_segm.loc[index_name]
 
         # step 5: draw the norm_segm on the original image
-        _draw_norm_segm(im_gray, midpoints_dict, rotated_angles, dict_norm_segm)
+        _draw_norm_segm(im_gray, midpoints_dict, rotated_angles, dict_norm_segm, False)
+
+        # step 6: draw the specified painter's average contour on the original image
+        if artist:
+            df_contour = pd.read_csv(fname_contour, index_col=0)
+            dict_contour = df_contour.loc[artist]
+            dict_contour['scaler'] = dict_norm_segm['scaler']
+            _draw_norm_segm(im_gray, midpoints_dict, rotated_angles, dict_contour, True)
 
         # save the final image
-        fnorm = '{}_{}_norm.jpg'.format(image_id, gender)
+        if artist:
+            fnorm = '{}_{}_norm_with_{}_contour.jpg'.format(image_id, gender, artist)
+        else:
+            fnorm = '{}_{}_norm.jpg'.format(image_id, gender)
         cv2.imwrite(os.path.join('pix', fnorm), im_gray)
 
         # show the final image
@@ -249,17 +262,15 @@ if __name__ == '__main__':
 
     # settings
     thickness = 2
-
-    # gender = woman
-    image_id = 253835
-
-    # gender = man
-    # image_id = 262335
+    color = (255, 0, 255)
 
     parser = argparse.ArgumentParser(description='DensePose - Visualize the dilated and symmetrical segment')
     parser.add_argument('--image', help='Image ID')
     parser.add_argument('--gender', help='Gender - man or woman')
+    parser.add_argument('--artist', help='Superimpose the average contour of a specified artist')
     args = parser.parse_args()
 
-    # python visualize_rect_segm_coco.py --image 253835 --gender woman
-    visualize(image_id=int(args.image), person_index=1, gender=args.gender)
+    # python visualize_rect_segm_coco.py --image 25057 --gender man
+    # python visualize_rect_segm_coco.py --image 54931 --gender woman
+    # python visualize_rect_segm_coco.py --image 54931 --gender woman --artist "Paul Gauguin"
+    visualize(image_id=int(args.image), person_index=1, gender=args.gender, artist=args.artist)

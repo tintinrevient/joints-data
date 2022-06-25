@@ -428,9 +428,9 @@ def _draw_one_segm_bbox(segm_id, segm_xy):
     global bbox_segm_dict
 
     # remove outliers
-    print('Before removing outliers:', len(segm_xy))
+    # print('Before removing outliers:', len(segm_xy))
     segm_xy = np.array(_remove_outlier(segm_xy=segm_xy)).astype(int)
-    print('After removing outliers:', len(segm_xy))
+    # print('After removing outliers:', len(segm_xy))
 
     # get the minimum bounding rectangle of segm_xy
     try:
@@ -600,10 +600,7 @@ def _draw_norm_segm(segm_xy_dict, keypoints_dict, midpoints_dict, rotated_angles
     max_x, max_y = np.max(rotated_segm_xy_dict['Head'], axis=0).astype(int)
     h = max((rotated_midpoints_dict['Head'][1] - min_y) * 2, (max_y - rotated_midpoints_dict['Head'][1]) * 2)
     if h > 0:
-        if gender == 'man':
-            scaler = 62 / h
-        elif gender == 'woman':
-            scaler = 58 / h
+        scaler = 60 / h
     norm_segm_dict['scaler'] = scaler
 
     _draw_one_rotated_and_scaled_segm('Head', rotated_segm_xy_dict['Head'], rotated_midpoints_dict['Head'], scaler)
