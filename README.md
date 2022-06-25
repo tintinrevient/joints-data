@@ -191,8 +191,9 @@ Execute the following command to superimpose the average contour of `Paul Gaugui
 python visualize_rect_segm_coco.py --image 54931 --gender woman --artist "Paul Gauguin"
 ```
 
-The example output is listed as below for one COCO image `COCO_val2014_000000054931.jpg`:
-* The image is saved in the file `pix/54931_woman_norm_with_Paul Gauguin_contour.jpg`.
+The example outputs are listed as below for one COCO image `COCO_val2014_000000054931.jpg`:
+* The image is saved in the file `pix/54931_woman_norm_with_Paul Gauguin_contour.jpg`;
+* The coordinates of the vertices of all the rectangles (`contours`) for the normalized (`src`) and painter's average (`dst`) contours respectively, which are saved in the files `warp/54931_on_Paul Gauguin_src_boxes.npy` and `warp/54931_on_Paul Gauguin_dst_boxes.npy`. It is used for further warping.
 
 <p float="left">
     <img src="pix/54931_woman_norm_with_Paul%20Gauguin_contour.jpg" height="300" />
