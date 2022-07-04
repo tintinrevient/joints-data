@@ -125,9 +125,8 @@ python generate_avg_contour.py --input datasets/modern/Paul\ Delvaux/90551.jpg -
 
 The example outputs are listed as below for one painting of Michelangelo:
 * The average contour of `Michelangelo`, which is saved in the file `output/contour.csv`;
-* The average contour of `Michelangelo`, which is saved in the file `pix/avg_contour_Michelangelo.jpg`;
-* The average contour superimposed on the norm segments of `Michelangelo`, which is saved in the file `pix/12758_on_avg_contour_Michelangelo.jpg`;
-* The average contour of `Michelangelo` (on the right) superimposed on the normalized segments (on the left) for one of his paintings as below.
+* The average contour of `Michelangelo` (on the right), which is saved in the file `pix/avg_contour_Michelangelo.jpg`;
+* The average contour of `Michelangelo` (on the right) superimposed on the normalized segments (on the left), which is saved in the file `pix/12758_on_avg_contour_Michelangelo.jpg`.
 
 <p float="left">
     <img src="pix/12758_on_avg_contour_Michelangelo.jpg" height="300" />
