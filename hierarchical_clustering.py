@@ -71,12 +71,42 @@ def _get_norm_pose_img(name):
 
 def _get_offset_image(xtick, label, ax):
     name = label.get_text()
-    img = _get_norm_pose_img(name)
+    img = _get_norm_pose_img(name)  # img.shape = 200 x 200
     im = OffsetImage(img, zoom=0.2)
     im.image.axes = ax
 
     ab = AnnotationBbox(im, (xtick, 0),  xybox=(0., -20.), frameon=False,
                         xycoords='data',  boxcoords="offset points", pad=0)
+
+    ax.add_artist(ab)
+
+
+def _get_cropped_pose_img(name):
+    '''show the corresponding images on xticks'''
+    name_list = name.split('_')
+
+    # artist
+    artist = name_list[0]
+    # fname
+    fname = '%s_%s.png' % (name_list[3], name_list[4])
+    # category
+    category = 'classical' if artist in classical_artists else 'modern'
+
+    path = "keypoints/%s/%s/%s" % (category, artist, fname)
+    im = plt.imread(path)
+    return im
+
+
+def _get_cropped_image(xtick, label, ax):
+    name = label.get_text()
+    img = _get_cropped_pose_img(name)
+    width, height, _ = img.shape
+    zoom = 0.2 * 180 / width
+    im = OffsetImage(img, zoom=zoom)
+    im.image.axes = ax
+
+    ab = AnnotationBbox(im, (xtick, 0), xybox=(0., -60.), frameon=False,
+                        xycoords='data', boxcoords="offset points", pad=0)
 
     ax.add_artist(ab)
 
@@ -108,7 +138,10 @@ def generate_dendrogram(artist, show_pose):
         xticklabels = list(ax.get_xticklabels())
 
         for xtick, label in zip(xticks, xticklabels):
+            # 1st line: norm pose
             _get_offset_image(xtick, label, ax)
+            # 2nd line: cropped pose from the rendered image with keypoints
+            _get_cropped_image(xtick, label, ax)
 
         # don't show axis
         plt.axis('off')
@@ -155,7 +188,7 @@ if __name__ == '__main__':
     show_pose = True if args.pose == 'True' else False
     num_cluster = int(args.cluster)
 
-    # step 1: generate the dentrogram
+    # step 1: generate the dendrogram
     generate_dendrogram(artist, show_pose)
 
     # step 2: generate the clusters

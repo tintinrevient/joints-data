@@ -224,7 +224,7 @@ def show_std_image(dict_norm_keypoints_xy, n_std, period):
     if n_std == 1:
         plt.ylim(100, 800)
     else:
-        plt.ylim(100, 700)
+        plt.ylim(130, 730)
 
     # descend y-axis
     ax_nstd.set_ylim(ax_nstd.get_ylim()[::-1])

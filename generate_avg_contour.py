@@ -130,7 +130,10 @@ def _draw_symmetrical_rect_segm(image, segm_id, w_and_h, ref_point):
     max_y = int(y + midpoint_y)
 
     added_image = cv2.addWeighted(image[min_y:max_y, min_x:max_x, :], 0.1, img_bg, 0.9, 0)
-    image[min_y:max_y, min_x:max_x, :] = added_image
+    try:
+        image[min_y:max_y, min_x:max_x, :] = added_image
+    except Exception as ex:
+        print(ex)
 
 
 def _draw_norm_midpoints(image):

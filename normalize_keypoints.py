@@ -284,7 +284,7 @@ def process_keypoints(infile, output_dict={}, output_index=[]):
     person_index = 0
     index_fname = '{}_{}'.format(infile.split('/')[3], infile[infile.rfind('/')+1:infile.rfind('_')])
     artist = infile.split('/')[2]
-    image_fname = infile.replace('/data/', '/pix/').replace('_keypoints.npy', '_rendered.png')
+    image_fname = infile.replace('_keypoints.npy', '_rendered.png')
     image = cv2.imread(image_fname)
 
     # iterate through all people
