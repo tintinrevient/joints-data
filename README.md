@@ -35,11 +35,12 @@ python normalize_keypoints.py --input keypoints/classical/Michelangelo/1304_keyp
 
 The example outputs are listed as below for one painting of Michelangelo:
 * The normalized poses, e.g., in the folder `keypoints/classical/Michelangelo/1304_norm_1.png`;
+* The cropped pose from the original image, e.g., in the folder `keypoints/classical/Michelangelo/1304_1.png`;
 * The angles between each joint, which is saved in the file `output/joint_angles.csv`.
 
 <p float="left">
     <img src="keypoints/classical/Michelangelo/1304_norm_1.png" height="150" />
-    <img src="keypoints/classical/Michelangelo/1304_norm_2.png" height="150" />
+    <img src="keypoints/classical/Michelangelo/1304_1.png" height="150" />
 </p>
 
 The length of the normalized limbs can be generated too!
