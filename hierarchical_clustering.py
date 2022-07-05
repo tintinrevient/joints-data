@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 import argparse
 from matplotlib.offsetbox import OffsetImage,AnnotationBbox
+import random
 
 
 # CSV data
@@ -96,16 +97,28 @@ def _get_cropped_pose_img(name):
     im = plt.imread(path)
     return im
 
-
+is_flipped = True
 def _get_cropped_image(xtick, label, ax):
+    global is_flipped
     name = label.get_text()
     img = _get_cropped_pose_img(name)
-    width, height, _ = img.shape
-    zoom = 0.2 * 180 / width
+    height, width, _ = img.shape
+    dy = 0.
+    if height > width:
+        zoom = 0.2 * 200 / height
+    else:
+        zoom = 0.2 * 200 / width
+        if is_flipped:
+            dy = -10.
+            is_flipped = False
+        else:
+            dy = 10.
+            is_flipped = True
+
     im = OffsetImage(img, zoom=zoom)
     im.image.axes = ax
 
-    ab = AnnotationBbox(im, (xtick, 0), xybox=(0., -60.), frameon=False,
+    ab = AnnotationBbox(im, (xtick, 0), xybox=(0., -60. + dy), frameon=False,
                         xycoords='data', boxcoords="offset points", pad=0)
 
     ax.add_artist(ab)
