@@ -224,7 +224,7 @@ def show_std_image(dict_norm_keypoints_xy, n_std, period):
     if n_std == 1:
         plt.ylim(100, 800)
     else:
-        plt.ylim(130, 730)
+        plt.ylim(100, 700)
 
     # descend y-axis
     ax_nstd.set_ylim(ax_nstd.get_ylim()[::-1])
@@ -704,7 +704,7 @@ if __name__ == '__main__':
         image_keypoints = np.load(path, allow_pickle='TRUE').item()['keypoints']
         keypoints_images_list.append(image_keypoints)
         # image path
-        image_fpath = str(path).replace('/data', '').replace('.npy', '.jpg')
+        image_fpath = str(path).replace('/keypoints', '/datasets').replace('.npy', '.jpg')
         image_fpath_list.append(image_fpath)
 
     # count of people
