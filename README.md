@@ -5,7 +5,10 @@
 The dataset can be accessed in [this Dropbox link](https://www.dropbox.com/sh/pz88z7vwwskm33t/AACgBD6siGHbP1eciRUBBmkca?dl=0).
 
 The generated data include:
-1. The keypoints inferred by OpenPose, which are saved in [this folder](/keypoints).
+1. The keypoints inferred by OpenPose, which are saved in [the keypoints folder](/keypoints) in the format of `.npy`
+2. The normalized segments, which are saved in [norm_segm.csv](/output/norm_segm.csv)
+3. The angles between adjacent three keypoints, which are saved in [joint_angles.csv](/output/joint_angles.csv)
+4. The contours for each artist, which are saved in [contour.csv](output/contour.csv)
 
 ## Overview
 
