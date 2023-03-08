@@ -1,5 +1,7 @@
 # Joints Data
 
+The paper is in [this link](https://arxiv.org/pdf/2210.08860.pdf).
+
 ## Pointers
 
 The dataset can be accessed in [this Dropbox link](https://www.dropbox.com/sh/pz88z7vwwskm33t/AACgBD6siGHbP1eciRUBBmkca?dl=0).
